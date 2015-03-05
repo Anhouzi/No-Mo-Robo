@@ -87,13 +87,13 @@ function CollisionHandler()
               damageStep(house, elist.getElement());
           }
           
-        /*  for(tlist.moveTo(0); tlist.getIndex() >= 0; tlist.moveNext())
+          for(tlist.moveTo(0); tlist.getIndex() >= 0; tlist.moveNext())
           {
-             if(checkCollision(plist.getElement(), elist.getElement()))
+             if(checkCollision(elist.getElement(), tlist.getElement()))
              {
-                            damageStep(elist.getElement(), elist.getElement());
+                            damageStep(elist.getElement(), tlist.getElement());
              }
-          } */
+          } 
        }
     }
 }
