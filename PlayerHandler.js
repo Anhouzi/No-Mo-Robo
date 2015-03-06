@@ -13,7 +13,7 @@ function PlayerHandler(stage) {
         var _upOffsetX;
         var _upOffsetY;
         
-        function position() { return {x: gInput.mouse.x, y: gInput.mouse.y}; }
+        function position() { return {x: gInput.mouse.x - 20, y: gInput.mouse.y  - 14}; }
         
         this.mouseX = function() { return gInput.mouse.x; }
         this.mouseY = function() { return gInput.mouse.y; }
