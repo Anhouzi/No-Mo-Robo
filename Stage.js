@@ -1,5 +1,6 @@
 
 function Stage() {
+    var ofs = (3 * CANVAS_HEIGHT) / 50; 
     
     var background = new Sprite();
     background.x = 0;
@@ -16,19 +17,13 @@ function Stage() {
     fence.width = CANVAS_WIDTH; 
     fence.image = Textures.load("http://i.imgur.com/pxjoAxj.png");
 
-    /*
-    var tempHouse = new Sprite();
-    tempHouse.x = 0; 
-    tempHouse.y = 10;
-    tempHouse.index = 8;
-    tempHouse.width = 200;
-    tempHouse.height = CANVAS_HEIGHT;
-    tempHouse.image = Textures.load("hhttp://i.imgur.com/GjCuaSO.png");
-    */
-
     function Grid(rows, cols, tileSize, tileType) {
         //Inner class for the level which draws each tile individually.
         //i = row #, j = col #
+        var _row = rows;
+        var _col = cols;
+        var _tileSize = tileSize;
+        
         var Tile = function(i, j, tileSize, tileType) {
             var tileSprite = new Sprite();
             //X.Starting_Position = 1/5 of the canvas width - the offset for the tile Sprite
@@ -54,7 +49,7 @@ function Stage() {
                 this.tiles[i][j] = new Tile(i, j, tileSize, tileType);
             }
         }
-        
+        /*
         function findTile(pos){
             var _newPosition = {x: 0, y: 0};
             _newPosition.x = Math.floor((pos.x-100) / ( (3 * CANVAS_HEIGHT) / 50 ));			//Returns a whole number that is the column of the tile. 
@@ -67,10 +62,30 @@ function Stage() {
             _newPosition.y = (_newPosition.y * (CANVAS_HEIGHT / 10)) + (CANVAS_HEIGHT/2); 
             return _newPosition;
         }
+        */
         
-        this.getTile = function(pos){
-            if (pos.x > 100 && pos.y >= CANVAS_HEIGHT/2){
-                return findTile(pos);
+        this.getTile = function(pos){ 
+
+        	var r;     
+        	var c;
+        	var _newPosition = {x: 0, y: 0};	
+        	//Between house and the right side of the screen. And between the middle and bottom of the screen. 
+            if (pos.x > 100 && pos.x < CANVAS_WIDTH && pos.y >= CANVAS_HEIGHT/2 && pos.y < CANVAS_HEIGHT ){
+            	//Go through each row to see where the cursor clicked. 
+            	for ( var i = 0; i < _row; i++){
+            		if ( pos.y <= (this._tileSize * i) &&  pos.y >= (this._tileSize * (i-1))){	
+            			r = i;
+            		}
+            	}
+            	//Go through each column to see where the cursor clicked. 
+            	for ( var j = 0; j < _col - 2; j++) {
+            		if ( pos.x <= ((ofs * i) + (j * _tileSize - ofs) - ofs) && pos.x >= ((ofs * i) + ((j - 1) * _tileSize) - ofs)){
+            			c = j;
+            		}
+            	}
+            	newPosition.x = (ofs * r) + ((c - 1) * _tileSize - ofs);
+            	newPosition.y = _tileSize * r;
+                return newPosition;
             } else {
                 return {x: 0, y: 0};
             }
@@ -82,7 +97,7 @@ function Stage() {
     
     this.getTile = function(pos) { 
         return _grid.getTile(pos);
-    }
+    };
     
     function stageInit (){
         var tileType = "http://i.imgur.com/9IqHhrM.png";
