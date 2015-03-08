@@ -5,7 +5,7 @@ function CollisionHandler()
 {
     //var qt = new QuadTree();
 
-    function checkCollison(sprite1, sprite2)
+    function checkCollision(sprite1, sprite2)
     {
        if(sprite1.x + sprite1.width >= sprite2.x &&
        sprite1.x  <= sprite2.x + sprite2.width)
@@ -21,23 +21,20 @@ function CollisionHandler()
        {
           return false;
        }
-    };
+    }
     
     function damageStep(obj1, obj2)
     {
         
         obj2.modifyCondition(-(obj1.damage()));
         obj1.modifyCondition(-(obj2.damage()));
-       /*if(obj1 instanceof Enemy && obj2 instanceof House)
-       {
-         obj2.modifyCondition(-(obj1.damage()));
-       }
        
-       if(obj1 instanceof Projectile && obj2 instanceof Enemy)
-       {
-          obj2.modifyCondition(-(obj1.damage()));
-          obj1._collision = true;
-       }*/
+       
+      // if(obj1 instanceof Projectile && obj2 instanceof Enemy)
+      // {
+         // obj2.modifyCondition(-(obj1.damage()));
+         // obj1._collision = true;
+       //} 
        
        //write condition for enemy to turret
     }
@@ -78,23 +75,27 @@ function CollisionHandler()
           {
              if(checkCollision(plist.getElement().sprite(), elist.getElement().sprite()))
              {
-                            damageStep(plist.getElement(), elist.getElement());
+                            var prevIndex = plist.getIndex(); //store the previous index
+                            damageStep(plist.getElement(), elist.getElement()); // resolve collision
+                            plist.getElement().despawn(); //remove projectile sprite from the world
+                            plist.remove(); // remove it from the list of active projectiles
+                            plist.moveTo(prevIndex); // index is now -1 so restore the previous index
              }
           }
           
-          if(checkCollison(elist.getElement().sprite(), house.sprite())) {
+          if(checkCollision(elist.getElement().sprite(), house.sprite())) {
               damageStep(elist.getElement(), house);
               damageStep(house, elist.getElement());
           }
           
-          for(tlist.moveTo(0); tlist.getIndex() >= 0; tlist.moveNext())
+         for(tlist.moveTo(0); tlist.getIndex() >= 0; tlist.moveNext())
           {
-             if(checkCollision(elist.getElement(), tlist.getElement()))
+             if(checkCollision(elist.getElement().sprite(), tlist.getElement().sprite()))
              {
-                            damageStep(elist.getElement(), tlist.getElement());
+               damageStep(elist.getElement(), tlist.getElement());
              }
           } 
        }
-    }
+    };
 }
 /***********************************/
