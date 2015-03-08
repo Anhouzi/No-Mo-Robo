@@ -27,7 +27,7 @@ function PlayerHandler(stage) {
         this.onMouseDown = function() {
             var tilePos;
             _downPos = position();
-            tilePos = stage.getTile(_downPos);
+            tilePos = _downPos;
             th.build(tilePos);
         }
     }
@@ -69,21 +69,24 @@ function PlayerHandler(stage) {
             //this.id = function() { return _id; }
             this.sprite = function() { return _sprite; }
             this.condition = function() { return _condition; }
+            this.position = function() { return _pos; }
             this.modifyCondition = function(delta) { _condition += delta; }
             this.damage = function() { return _damage; }
             
             this.update = function(dt) {
                 _timeSinceLastShot += dt;
-                if(_timeSinceLastShot > FIRE_RATE) {
+                
+                if(_timeSinceLastShot > TURRET_FIRE_RATE) {
+                    
                     _timeSinceLastShot = 0;
                     return true;
                 }
                 return false;
-            }
+            };
             
             this.despawn = function() {
                 world.removeChild(_sprite);
-            }
+            };
         }
         /***********************************/
         
@@ -102,7 +105,7 @@ function PlayerHandler(stage) {
             }
             
             for(dead.moveTo(0); dead.getIndex() >= 0; dead.moveNext()) {
-                _turrets.moveTo(dead.getElement())
+                _turrets.moveTo(dead.getElement());
                 _turrets.getElement().despawn();
                 _turrets.remove();
             }
@@ -118,14 +121,15 @@ function PlayerHandler(stage) {
             var ret = new DList();
             var turret;
             clearDead();
-            for(_turrets.moveTo(0); _turrets.getIndex >= 0; _turrets.moveNext()) {
+            for(_turrets.moveTo(0); _turrets.getIndex() >= 0; _turrets.moveNext()) {
+                
                 turret = _turrets.getElement();
-                if(turret.update()) {
+                if(turret.update(dt)) {
                     ret.append(turret);
                 }
             }
             return ret;
-        }
+        };
         
     }
     /***********************************/
@@ -144,6 +148,7 @@ function PlayerHandler(stage) {
             var _direction = dir;
             var _damage = parent.damage();
             var _sprite = initSprite(parent.position());
+            var _condition = 1;
 
             function initSprite(pos) {
                 var ret = new Sprite();
@@ -151,30 +156,47 @@ function PlayerHandler(stage) {
                 ret.index = 3;
                 ret.width = PROJECTILE_SPRITE_WIDTH;
                 ret.height = PROJECTILE_SPRITE_HEIGHT;
-                ret.x = pos.x;
-                ret.y = pos.y;
+                ret.x = pos.x + TURRET_SPRITE_WIDTH / 1.2;
+                ret.y = pos.y + TURRET_SPRITE_WIDTH / 3;
                 ret.offsetX = -ret.width / 2;
                 ret.offsetY = -ret.height / 2;
                 world.addChild(ret);
                 return ret;
             }
             
-            this.sprite = function() { return _sprite; }
+            this.sprite = function() { return _sprite; };
             
             this.update = function(dt) {
                 _sprite.x += _speed * _direction.x * dt;
                 _sprite.y += _speed * _direction.y * dt;
-            }
+            };
+            
+            this.damage = function()
+            {
+                return _damage;
+            };
+        
+            this.condition = function()
+            {
+               return _condition;
+            };
+            
+             this.modifyCondition = function(delta) { _condition += delta;};
+             
+             this.despawn = function()
+             {
+                 world.removeChild(_sprite);
+             }
         }
         /***********************************/
         
         var _projectiles = new DList();
         
         function generateProjectile(turret) {
-            _projectiles.append(new Projectile(turret, FIRE_DIRECTION))
+            _projectiles.append(new Projectile(turret, FIRE_DIRECTION));
         }
         
-        this.projectiles = function() { return _projectiles; }
+        this.projectiles = function() { return _projectiles; };
         
         this.update = function(dt, shooting) {
             for(_projectiles.moveTo(0); _projectiles.getIndex() >= 0; _projectiles.moveNext()) {
@@ -183,7 +205,8 @@ function PlayerHandler(stage) {
             for(shooting.moveTo(0); shooting.getIndex() >= 0; shooting.moveNext()) {
                 generateProjectile(shooting.getElement());
             }
-        }
+        };
+        
         
     }
     /***********************************/
