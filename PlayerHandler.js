@@ -28,8 +28,12 @@ function PlayerHandler(stage) {
             var tilePos;
             _downPos = position();
             tilePos = _downPos;
-            th.build(tilePos);
-        }
+            
+            if((position().x >= 120 && position().x < CANVAS_WIDTH  && position().y > (3 * CANVAS_HEIGHT / 5) - 100))
+            {
+                th.build(tilePos);
+            }
+        };
     }
     /***********************************/
     
