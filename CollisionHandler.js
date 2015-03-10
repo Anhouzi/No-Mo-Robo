@@ -75,11 +75,14 @@ function CollisionHandler()
           {
              if(checkCollision(plist.getElement().sprite(), elist.getElement().sprite()))
              {
-                            var prevIndex = plist.getIndex(); //store the previous index
+                          if(checkCollision(plist.getElement().sprite(), elist.getElement().sprite()))
+             {
+                            var prevIndex = plist.getIndex() - 1; //store the previous index (-1 to account for missing element upon remove)
                             damageStep(plist.getElement(), elist.getElement()); // resolve collision
                             plist.getElement().despawn(); //remove projectile sprite from the world
                             plist.remove(); // remove it from the list of active projectiles
                             plist.moveTo(prevIndex); // index is now -1 so restore the previous index
+             }
              }
           }
           
