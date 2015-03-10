@@ -1,0 +1,226 @@
+// this allows you to click on a scrap sprite, despawn it, and add money to your scrap bank.
+
+//Make sure we're using 2D rendering
+use2D = true;
+//Initialize Brine. This must be after setting use2D
+initGame("canvas");
+
+//creating text boxes with puns
+
+var money = 0;
+
+var moneybox = new TextBox()
+moneybox.x =30;
+moneybox.y = 560;
+moneybox.fontSize = 32
+moneybox.text = "money: "+ money;
+
+
+
+
+
+var introText = new TextBox();
+introText.x = 10;
+introText.y = 10;
+introText.fontSize = 36;
+introText.text = "Click and drag any of the images for a bad pun!";
+
+
+
+var firePun = new TextBox();
+firePun.x = 300;
+firePun.y = 560;
+firePun.fontSize = 32;
+firePun.text = "You're Fired!";
+
+
+var waterPun = new TextBox();
+waterPun.x = 240;
+waterPun.y = 560;
+waterPun.fontSize = 32;
+waterPun.text = "May I ask 'water' you doing?";
+
+
+var earthPun = new TextBox();
+earthPun.x = 150;
+earthPun.y = 560;
+earthPun.fontSize = 32;
+earthPun.text = "I built this program from the 'ground' up.";
+
+
+var airPun = new TextBox();
+airPun.x = 30;
+airPun.y = 560;
+airPun.fontSize = 32;
+airPun.text = "Before I program, I need to run some... 'AIRrands.'";
+
+var leafPun = new TextBox();
+leafPun.x = 240;
+leafPun.y = 560;
+leafPun.fontSize = 32;
+leafPun.text = "Just leaf me alone!";
+
+var icePun = new TextBox();
+icePun.x =240;
+icePun.y =560;
+icePun.fontSize = 32;
+icePun.text = "'ICEY' what you did there.";
+
+
+var encourageText = new TextBox()
+encourageText.x = 250;
+encourageText.y = 560;
+encourageText.fontSize = 32;
+encourageText.text = "Well go on... do it!";
+
+
+
+// creating a load content function
+
+function LoadContent()
+{
+ 
+//creating all the sprites to be drawn
+pictureA = new Sprite();
+pictureB = new Sprite();
+pictureC = new Sprite();
+pictureD = new Sprite();
+pictureE = new Sprite();
+pictureF = new Sprite();    
+
+pictureA.width = 150;
+pictureA.height = 150;
+pictureA.x = 70;
+pictureA.y = 80;
+pictureA.image = Textures.load("http://i.imgur.com/VRg2YYl.png");
+
+pictureB.width = 150;
+pictureB.height = 150;
+pictureB.x = 240;
+pictureB.y = 80;
+pictureB.image = Textures.load("https://cdn2.iconfinder.com/data/icons/lil-weather/185/wind-512.png");
+
+pictureC.width = 150;
+pictureC.height = 150;
+pictureC.x = 410;
+pictureC.y = 80;
+pictureC.image=Textures.load("http://vignette2.wikia.nocookie.net/mcgaming/images/9/92/Minecraft_logo_dirt.png/revision/latest?cb=20120104151216");
+
+pictureD.width = 150;
+pictureD.height = 150;
+pictureD.x = 580;
+pictureD.y = 80;
+pictureD.image = Textures.load("http://www.psdgraphics.com/file/water-droplet-icon.jpg");
+
+pictureE.width = 150;
+pictureE.height = 150;
+pictureE.x = 155;
+pictureE.y = 240;
+pictureE.image = Textures.load("http://images.clipartpanda.com/leaf-clip-art-di7jdxxi9.png");
+    
+
+pictureF.width = 150;
+pictureF.width = 150;
+pictureF.x = 345;
+pictureF.y= 240;
+pictureF.image = Textures.load("http://ec.l.thumbs.canstockphoto.com/canstock3936846.jpg");
+
+    
+    
+    
+}
+//creating a draw funtion
+
+ function Draw()
+ {
+  // drawing the pictures on the canvas at the given coordinates in the load function
+ world.addChild(pictureA);
+ world.addChild(pictureB);
+ world.addChild(pictureC);
+ world.addChild(pictureD);
+ world.addChild(pictureE);
+ world.addChild(pictureF);
+}
+//calling created functions
+LoadContent();
+Draw();
+//I used most of the example posted on piazza for the sprite dragging part of this code... I hope that's ok
+//push images into an array for dragging
+var sprites = new Array();
+sprites.push(pictureA);
+sprites.push(pictureB);
+sprites.push(pictureC);
+sprites.push(pictureD);
+sprites.push(pictureE);
+sprites.push(pictureF);
+
+// Check if given (x,y) coordinates are within the sprite's area.
+function checkSprite(sprite,x,y){
+  var minX = sprite.x;
+  var maxX = sprite.x+sprite.width;
+  var minY = sprite.y;
+  var maxY = sprite.y+sprite.height;
+  var mx = x;
+  var my = y;
+  
+  if(mx >= minX && mx <= maxX && my >= minY && my <= maxY){
+    return true;
+  }
+  return false;
+}
+
+//creating a sprite called manager to manage dragging the other sprites
+var manager = new Sprite();
+manager.dragging = false;
+manager.target = undefined;
+manager.dragOffsetX = 0;
+manager.dragOffsetY = 0;
+
+//drawing the manager sprite onto the canvas
+world.addChild(manager);
+
+//lets the manager sprite know when the mouse is down
+gInput.addMouseDownListener(manager);
+//let's the manager sprite know when the mouse is up
+gInput.addMouseUpListener(manager);
+
+//when the user pushes the mouse buttong down
+manager.onMouseDown = function(button){
+
+    //apply to each sprite in sprite array
+  for(var sprite in sprites){
+    sprite = sprites[sprite];
+    // checks to see if we re clicking on a sprite
+    if(checkSprite(sprite, gInput.mouse.x, gInput.mouse.y)){
+      //this will update the dragging variables
+       
+      this.target = sprite;  
+      this.dragOffsetX = gInput.mouse.x-sprite.x;
+      this.dragOffsetY = gInput.mouse.y-sprite.y;
+   // when the mouse is down on a sprite, it will print out the corresponding text box to the bottom of the
+   // screen
+         
+             money++;
+             // needs to update text box so that's why we put it inside the if statement
+             moneybox.text = "money: "+ money;
+             sprite.x = 10000;
+       
+
+            
+      break;
+    }
+  }
+}
+
+
+
+// update function
+manager.update = function(d){
+   
+    
+  world.removeChild(moneybox);
+ world.addChild(moneybox); 
+   
+    
+ 
+}
