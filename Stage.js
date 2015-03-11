@@ -1,6 +1,6 @@
 
 function Stage() {
-    var ofs = (3 * CANVAS_HEIGHT) / 50; 
+
     
     var background = new Sprite();
     background.x = 0;
@@ -16,14 +16,23 @@ function Stage() {
     fence.index = 9;
     fence.width = CANVAS_WIDTH; 
     fence.image = Textures.load("http://i.imgur.com/pxjoAxj.png");
+    
+    
+
+    /*
+    var tempHouse = new Sprite();
+    tempHouse.x = 0; 
+    tempHouse.y = 10;
+    tempHouse.index = 8;
+    tempHouse.width = 200;
+    tempHouse.height = CANVAS_HEIGHT;
+    tempHouse.image = Textures.load("hhttp://i.imgur.com/GjCuaSO.png");
+    */
+   
 
     function Grid(rows, cols, tileSize, tileType) {
         //Inner class for the level which draws each tile individually.
         //i = row #, j = col #
-        var _row = rows;
-        var _col = cols;
-        var _tileSize = tileSize;
-        
         var Tile = function(i, j, tileSize, tileType) {
             var tileSprite = new Sprite();
             //X.Starting_Position = 1/5 of the canvas width - the offset for the tile Sprite
@@ -49,46 +58,49 @@ function Stage() {
                 this.tiles[i][j] = new Tile(i, j, tileSize, tileType);
             }
         }
-        /*
-        function findTile(pos){
-            var _newPosition = {x: 0, y: 0};
-            _newPosition.x = Math.floor((pos.x-100) / ( (3 * CANVAS_HEIGHT) / 50 ));			//Returns a whole number that is the column of the tile. 
-            _newPosition.y = Math.floor((pos.y - (CANVAS_HEIGHT / 2)) / CANVAS_HEIGHT/5);		//Returns a whole number that is the row of the tile. 
-            
-            //(Column Number * Tile Size) + (House offset + ((5 - Lane Number) * Tile Offset))
-            _newPosition.x = (_newPosition.x * (CANVAS_HEIGHT / 10)) + (100 + ((5 - _newPosition.y) * CANVAS_HEIGHT / 50)); 
-            
-            //(Row number * Tile Size) + 1/2 Canvas height
-            _newPosition.y = (_newPosition.y * (CANVAS_HEIGHT / 10)) + (CANVAS_HEIGHT/2); 
-            return _newPosition;
-        }
-        */
         
-        this.getTile = function(pos){ 
-
-        	var r;     
-        	var c;
-        	var _newPosition = {x: 0, y: 0};	
-        	//Between house and the right side of the screen. And between the middle and bottom of the screen. 
-            if (pos.x > 100 && pos.x < CANVAS_WIDTH && pos.y >= CANVAS_HEIGHT/2 && pos.y < CANVAS_HEIGHT ){
-            	//Go through each row to see where the cursor clicked. 
-            	for ( var i = 0; i < _row; i++){
-            		if ( pos.y <= (this._tileSize * i) &&  pos.y >= (this._tileSize * (i-1))){	
-            			r = i;
-            		}
-            	}
-            	//Go through each column to see where the cursor clicked. 
-            	for ( var j = 0; j < _col - 2; j++) {
-            		if ( pos.x <= ((ofs * i) + (j * _tileSize - ofs) - ofs) && pos.x >= ((ofs * i) + ((j - 1) * _tileSize) - ofs)){
-            			c = j;
-            		}
-            	}
-            	newPosition.x = (ofs * r) + ((c - 1) * _tileSize - ofs);
-            	newPosition.y = _tileSize * r;
-                return newPosition;
-            } else {
-                return {x: 0, y: 0};
+        function findTile(pos){
+            var mX = pos.x;
+            var mY = pos.y;
+            
+            var currentRow;
+            var currentCol;
+            
+            for(i = 0; i < NUM_ROWS; ++i) {
+                if(mY < CANVAS_HEIGHT - (i * TILE_HEIGHT) && mY > CANVAS_HEIGHT - ((i + 1) * TILE_HEIGHT))
+                {
+                    currentRow = i + 1;
+                }
             }
+            if(currentRow) {
+                var totalOfs = currentRow * TILE_OFS;
+                var startingPos = totalOfs + HOUSE_BASE_ACTUAL;
+                for(j = 0; j < NUM_COLS; ++j) {
+                    if(mX > startingPos + j * TILE_WIDTH && mX < startingPos + (j + 1) * TILE_WIDTH)
+                    {
+                        currentCol = j + 1;
+                    }
+                }
+                if(currentCol) {
+                    return {i: currentRow, j: currentCol};
+                }
+            }
+        }
+        
+        this.getTile = function(pos){
+            if (pos.x > 100 && pos.y >= CANVAS_HEIGHT / 2){
+                var tile = findTile(pos);
+                console.log(tile);
+                if(tile) {
+                    var tilePos = {x: 0, y: 0};
+                    tilePos.x += HOUSE_BASE_ACTUAL + (TILE_OFS * tile.i);
+                    tilePos.x += TILE_WIDTH * (tile.j - 1) - (TILE_OFS / tile.j * (tile.j - 1));
+                    tilePos.y += CANVAS_HEIGHT - (TILE_HEIGHT * (tile.i));
+                    return tilePos;
+                }
+            } 
+            return -1;
+            
         };
     };
 
@@ -97,7 +109,7 @@ function Stage() {
     
     this.getTile = function(pos) { 
         return _grid.getTile(pos);
-    };
+    }
     
     function stageInit (){
         var tileType = "http://i.imgur.com/9IqHhrM.png";
@@ -107,6 +119,5 @@ function Stage() {
         //world.addChild(tempHouse);
         _grid = new Grid(5, 15, CANVAS_HEIGHT/10, tileType);
     }
-    
     stageInit();
 }
