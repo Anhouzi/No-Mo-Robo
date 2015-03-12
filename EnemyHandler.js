@@ -3,9 +3,9 @@
 ************************************/
 function EnemyHandler() {
 
-var Robot = {spriteSource: ROBOT_SPRITE_SRC, zIndex: robotZ, spriteWidth: robotWidth, spriteHight: robotHeight};
-var HeavyBot = (spriteSource: HEAVY_BOT_SRC, zIndex: heavyZ, spriteWidth: heavyWidth, spriteHeight: heavyHeight};
-var SpeedBot = {spriteSource: SPEED_BOT_SRC, zIndex: speedZ, spriteWidth: speedWidth, spriteHeight: speedHeight};
+//var Robot = {spriteSource: ROBOT_SPRITE_SRC, zIndex: robotZ, spriteWidth: robotWidth, spriteHight: robotHeight};
+//var HeavyBot = {spriteSource: HEAVY_BOT_SRC, zIndex: heavyZ, spriteWidth: heavyWidth, spriteHeight: heavyHeight};
+//var SpeedBot = {spriteSource: SPEED_BOT_SRC, zIndex: speedZ, spriteWidth: speedWidth, spriteHeight: speedHeight};
 
     /************************************
         Enemy
@@ -34,11 +34,11 @@ var SpeedBot = {spriteSource: SPEED_BOT_SRC, zIndex: speedZ, spriteWidth: speedW
             return ret;
         }
         
-        this.id = function() { return _id; }
-        this.sprite = function() { return _sprite; }
-        this.condition = function() { return _condition; }
-        this.modifyCondition = function(delta) { _condition += delta; }
-        this.damage = function() { return _damage; }
+        this.id = function() { return _id; };
+        this.sprite = function() { return _sprite; };
+        this.condition = function() { return _condition; };
+        this.modifyCondition = function(delta) { _condition += delta; };
+        this.damage = function() { return _damage; };
         
       /*  function makeByType(type)
         {
@@ -80,11 +80,12 @@ var SpeedBot = {spriteSource: SPEED_BOT_SRC, zIndex: speedZ, spriteWidth: speedW
             if(_sprite.x > 115) {
                 _sprite.x -= _speed * dt;
             }
-        }
+        };
+        
         
         this.despawn = function() {
             world.removeChild(_sprite);
-        }
+        };
         
     }
     /***********************************/
@@ -97,7 +98,7 @@ var SpeedBot = {spriteSource: SPEED_BOT_SRC, zIndex: speedZ, spriteWidth: speedW
         
         function id() {
             var next;
-            if(this.next == undefined || this.next < 0) {
+            if(this.next === undefined || this.next < 0) {
                 this.next = 0;
             }
             return this.next++;
@@ -109,13 +110,14 @@ var SpeedBot = {spriteSource: SPEED_BOT_SRC, zIndex: speedZ, spriteWidth: speedW
             
             spawnPos.x = CANVAS_WIDTH;
             spawnPos.y = CANVAS_HEIGHT / 2 + lane * LANE_HEIGHT - 5;
+            spawnPos.y -= ENEMY_SPRITE_HEIGHT;
             
             return spawnPos;
         }
         
         this.spawn = function() {
             return new Enemy(id(), position());
-        }
+        };
     }
     /***********************************/
     
@@ -149,7 +151,7 @@ var SpeedBot = {spriteSource: SPEED_BOT_SRC, zIndex: speedZ, spriteWidth: speedW
         }
     }
     
-    this.enemies = function() { return _enemies.copy(); }
+    this.enemies = function() { return _enemies.copy(); };
     
     this.update = function(dt) {
         clearDead();
@@ -160,6 +162,15 @@ var SpeedBot = {spriteSource: SPEED_BOT_SRC, zIndex: speedZ, spriteWidth: speedW
             _enemies.append(_spawnHandler.spawn());
         }
         
-    }
+    };
+    
+     this.reset = function()
+     {
+         for(_enemies.moveTo(0); _enemies.getIndex() >= 0; _enemies.moveNext())
+         {
+             _enemies.getElement().despawn();
+         }
+        _enemies.clear();  
+     };
 }
 /***********************************/
