@@ -35,6 +35,7 @@ function PlayerHandler(stage) {
             }
             
         };
+        
     }
     /***********************************/
     
@@ -73,11 +74,11 @@ function PlayerHandler(stage) {
             }
             
             //this.id = function() { return _id; }
-            this.sprite = function() { return _sprite; }
-            this.condition = function() { return _condition; }
-            this.position = function() { return _pos; }
-            this.modifyCondition = function(delta) { _condition += delta; }
-            this.damage = function() { return _damage; }
+            this.sprite = function() { return _sprite; };
+            this.condition = function() { return _condition; };
+            this.position = function() { return _pos; };
+            this.modifyCondition = function(delta) { _condition += delta; };
+            this.damage = function() { return _damage; };
             
             this.update = function(dt) {
                 _timeSinceLastShot += dt;
@@ -119,11 +120,11 @@ function PlayerHandler(stage) {
             }
         }
         
-        this.turrets = function() { return _turrets.copy(); }
+        this.turrets = function() { return _turrets.copy(); };
         
         this.build = function(position) {
             _turrets.append(new Turret(null, position));
-        }
+        };
         
         this.update = function(dt) {
             var ret = new DList();
@@ -139,6 +140,14 @@ function PlayerHandler(stage) {
             return ret;
         };
         
+        this.reset = function()
+        {
+            for(_turrets.moveTo(0); _turrets.getIndex() >= 0; _turrets.moveNext())
+            {
+                _turrets.getElement().despawn();
+            }
+            _turrets.clear();
+        };
     }
     /***********************************/
     
@@ -194,7 +203,7 @@ function PlayerHandler(stage) {
              this.despawn = function()
              {
                  world.removeChild(_sprite);
-             }
+             };
         }
         /***********************************/
         
@@ -217,7 +226,14 @@ function PlayerHandler(stage) {
             }
         };
         
-        
+        this.reset = function()
+        {
+            for(_projectiles.moveTo(0); _projectiles.getIndex() >= 0; _projectiles.moveNext())
+            {
+                _projectiles.getElement().despawn();
+            }
+            _projectiles.clear();
+        };
     }
     /***********************************/
     
@@ -242,22 +258,18 @@ function PlayerHandler(stage) {
                 world.addChild(ret);
                 return ret;
                 
-                this.onMouseDown = function()
-                {
-                    return true;
-                }
             }
         
-        this.damage = function() { return 999; }
-        this.sprite = function() { return _sprite; }
+        this.damage = function() { return 999; };
+        this.sprite = function() { return _sprite; };
         
-        this.modifyCondition = function(delta) { _condition += delta; }
-        this.condition = function() { return _condition; }
+        this.modifyCondition = function(delta) { _condition += delta; };
+        this.condition = function() { return _condition; };
         
         this.update = function() {
             if(_condition <= 0)
                 gameOver = true;
-        }
+        };
     }
     /***********************************/
     
@@ -269,8 +281,8 @@ function PlayerHandler(stage) {
     var _projectileHandler = new ProjectileHandler();
     var _house = new House();
     
-    this.turrets = function() { return _turretHandler.turrets(); }
-    this.projectiles = function() { return _projectileHandler.projectiles(); }
+    this.turrets = function() { return _turretHandler.turrets(); };
+    this.projectiles = function() { return _projectileHandler.projectiles(); };
     this.house = function() { return _house; };
     
     this.update = function(dt) {
@@ -278,7 +290,7 @@ function PlayerHandler(stage) {
         shooting = _turretHandler.update(dt);
         _projectileHandler.update(dt, shooting);
         _house.update();
-    }
+    };
     
     gInput.addMouseDownListener(_inputHandler);
     gInput.addMouseUpListener(_inputHandler);
