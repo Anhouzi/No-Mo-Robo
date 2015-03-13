@@ -5,22 +5,28 @@ sheet.src = "http://i.imgur.com/KNsLL76.png";
 
 //====================Sprite Sources=====================================================//
 var normalBot = new Image();
-normalBot.src = "http://i.imgur.com/kX9D0OK.png";
+//Lonely Version
+normalBot.src = "http://i.imgur.com/6yZDAs1.png";
 //normalBot.width = 200;
 //normalBot.height = 200;
 
 var speedyBot = new Image();
-speedyBot.src = "http://i.imgur.com/Uvjl2vD.png";
+//Lonely Version
+speedyBot.src = "http://i.imgur.com/ry3LdWs.png";
 //speedyBot.width = 200;
 //speedyBot.height = 200;
 
 var tankyBot = new Image();
-tankyBot.src = "http://i.imgur.com/i1uvEyO.png";
+//Lonely Version
+tankyBot.src = "http://i.imgur.com/ULe58Pm.png";
 //tankyBot.width = 200;
 //tankyBot.height = 200;
 
 var knifester = new Image();
-knifester.src = "http://i.imgur.com/KNsLL76.png";
+knifester.src = "http://i.imgur.com/9rvsrtT.png";
+
+var knife = new Image();
+knife.src = "http://i.imgur.com/AKW49Cq.png";
 //knifester.width = 250;
 //knifester.height = 50;
 
