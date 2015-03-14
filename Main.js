@@ -1,65 +1,81 @@
 /************************************
-    Collision Handler
+    Main
 ************************************/
-function CollisionHandler() {
+var gameStateManager;
+var inputHandler;
+var stage;
+var turrets;
+var projectiles;
+var enemies;
+var collisionHandler;
+var score = 0;
+var scoreBox = new TextBox("Score: " + score);
+scoreBox.index = 0;
+scoreBox.x = CANVAS.width - 200;
+scoreBox.y = 50;
 
 
-var house = new Sprite();
+var gameOver;
+var houseCondition;
 
-/*house.x = 0;
-house.width = 145;
-house.height = 600;
-gameStateManager.gameStage().addChild(house);*/
-
-    function collision(left, right) {
-        var a = left.sprite();
-        var b = right.sprite();
-  
-        return !(a.x + a.width < b.x || a.x > b.x + b.width) &&
-               !(a.y + a.height < b.y || a.y > b.y + b.height);
+function Main() {
+    
+    initGameStateManager();
+    initInput();
+    
+    function newGame() {
+        console.log('new game');
+        initStage();
+         gameStateManager.gameStage().addChild(scoreBox);
+        /*
+        initEntities(turrets);
+        initEntities(projectiles);
+        initEntities(enemies);
+        */
+       
+        initTurrets();
+        initProjectiles();
+        initEnemies();
+        initCollision();
+        houseCondition = STARTING_HOUSE_CONDITION;
     }
     
-    this.update = function() {
-        var enemy;
-        var current;
-        for(enemies.moveTo(0); enemies.getIndex() >= 0; enemies.moveNext()) {
-            enemy = enemies.getElement();
-            for(projectiles.moveTo(0); projectiles.getIndex() >= 0; projectiles.moveNext()) {
-                current = projectiles.getElement();
-                if(collision(enemy, current)) {
-                    enemy.modifyCondition(-current.damage());
-                    current.despawn();
-                    projectiles.remove();
-                    projectiles.moveTo(0);
+    world.update = function(dt) {
+        dt = dt * MSPF / 1000;
+        if(gameStateManager.inGame()) { // only update when looking at game
+            if(!gameOver) {
+                // clear dead
+               
+                gameStateManager.gameStage().removeChild(scoreBox);
+                gameStateManager.gameStage().addChild(scoreBox);
+                clearEntities(turrets);
+                clearEntities(enemies);
+                // update game
+                updateEntities(turrets, dt);
+                updateEntities(projectiles, dt);
+                updateEntities(enemies, dt);
+                // check for lose condition
+                generateEnemies(dt); // bad, but works well enough for now
+                  scoreBox.text = "Score: " + score;
+                collisionHandler.update(dt);
+                if(houseCondition <= 0) {
+                    gameOver = true;
+                    ENEMY_SPAWN_INTERVAL = 1000;
+                    houseCondition = STARTING_HOUSE_CONDITION;
+                    score = 0;
+                    gameStateManager.gameStage().removeChild(scoreBox);
+                    gameStateManager.gameStage().addChild(scoreBox);
                 }
+            } else {
+                newGame();
+                gameOver = false;
             }
-            for(turrets.moveTo(0); turrets.getIndex() >= 0; turrets.moveNext()) {
-                current = turrets.getElement();
-                if(collision(enemy, current)) {
-                    // for presentation purposes only, until projectiles are added again
-                    enemy.modifyCondition(-999);
-                    current.modifyCondition(-999);
-                    score += 100;
-                  
-                   // ENEMY_SPAWN_INTERVAL /= 1.25;
-                    
-                    if(ENEMY_SPAWN_INTERVAL > 50)
-                    {
-                        ENEMY_SPAWN_INTERVAL /= 1.25;
-                    }
-                    
-                    else
-                    {
-                        ENEMY_SPAWN_INTERVAL = 200;
-                    }
-                    console.log(ENEMY_SPAWN_INTERVAL);
-                    
-                }
-            }
-           
-            
         }
     }
 
 }
 /***********************************/
+
+
+
+
